@@ -1,0 +1,30 @@
+"python"
+# Cell 1: Import necessary libraries
+import pandas as pd
+import numpy as np
+from skyfield.api import load, EarthSatellite
+from src import load_tle_from_lines, propagate_orbit, check_collisions
+
+# Cell 2: Load TLE data from local file
+tle_path = 'data/iss.tle'
+with open(tle_path) as f:
+    lines = [line.strip() for line in f.readlines()]
+sat = load_tle_from_lines(lines[0], lines[1], lines[2])
+
+# Cell 3: Propagate orbit
+positions = propagate_orbit(sat, start_hour=0, duration_minutes=60)
+
+# Cell 4: Simulate another satellite and check collisions
+# Example: Load second TLE
+second_sat = load_tle_from_lines('HST', *lines)  # replace with actual lines
+positions_list = [positions, propagate_orbit(second_sat)]
+risks = check_collisions(positions_list, threshold_km=1.0)
+print('Collision Risks:', risks)
+
+# Cell 5: Visualization
+from src.visualizer import plot_distances
+# Compute distances over time for pairs and plot
+import math
+
+distances = [math.dist(p1, p2) for p1, p2 in zip(positions_list[0], positions_list[1])]
+plot_distances(distances, label='ISS vs HST Distances (km)')

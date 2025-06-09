@@ -1,0 +1,7 @@
+# skyfield
+# pandas
+# numpy
+# matplotlib
+# scipy
+# streamlit (optional)
+# plotly (optional)
